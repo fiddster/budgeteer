@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+using Budgeteer.Core.Data;
+using Budgeteer.Core.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Budgeteer;
 
@@ -15,10 +18,24 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
+		var dbPath = Path.Combine(FileSystem.AppDataDirectory, "budgeteer.db");
+		builder.Services.AddDbContext<BudgeteerDbContext>(options =>
+			options.UseSqlite($"DataSource={dbPath}"));
+
+		builder.Services.AddTransient<DatabaseInitializer>();
+		builder.Services.AddTransient<ICategoryService, CategoryService>();
+		builder.Services.AddTransient<IAccountService, AccountService>();
+
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
 
-		return builder.Build();
+		var app = builder.Build();
+
+		using var scope = app.Services.CreateScope();
+		var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
+		initializer.EnsureCreatedAsync().GetAwaiter().GetResult();
+
+		return app;
 	}
 }

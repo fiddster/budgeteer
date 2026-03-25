@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "createdAt": "2026-03-25T21:51:40.482991+00:00",
+  "updatedAt": "2026-03-25T21:51:40.4864279+00:00",
+  "description": "Initial baseline created by 'slopwatch init' on 2026-03-25 21:51:40 UTC",
+  "entries": [
+    {
+      "hash": "c2b37e6bfd166117",
+      "ruleId": "SW005",
+      "filePath": "Directory.Build.props",
+      "lineNumber": 6,
+      "codeSnippet": "<TreatWarningsAsErrors>false</TreatWarningsAsErrors>",
+      "message": "TreatWarningsAsErrors is disabled - warnings will not fail the build",
+      "baselinedAt": "2026-03-25T21:51:40.4863718+00:00"
+    }
+  ]
+}
