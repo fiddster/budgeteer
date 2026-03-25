@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/build/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="NuGet.Config" />
+    <File Path="RELEASE_NOTES.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Budgeteer/Budgeteer.csproj" />
+    <Project Path="src/Budgeteer.Core/Budgeteer.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Budgeteer.Core.Tests/Budgeteer.Core.Tests.csproj" />
+  </Folder>
+</Solution>
