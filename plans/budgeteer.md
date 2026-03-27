@@ -47,9 +47,11 @@ A multi-step import wizard accessible from an account's detail page:
 
 1. **File selection** — file picker filtered to `.csv`; parse headers with CsvHelper
 2. **Column mapping** — user maps CSV headers to: Date, Description, Amount, Balance (optional), Reference (optional); pre-filled from saved `ColumnMapping` if one exists
-3. **Parse + duplicate detection** — parse all rows using the mapping; flag rows that match an existing transaction (Date + Description + Amount + AccountId)
-4. **Preview screen** — show parsed transactions in a list; duplicates highlighted with a skip/import toggle; user can review before committing
+3. **Parse + duplicate detection** — parse all rows using the mapping; flag rows that match an existing transaction (Date + Description + Amount + AccountId); rows with parse errors (e.g. malformed date) are separated into an error list
+4. **Preview screen** — three sections: (a) valid transactions with skip/import toggle, (b) duplicates highlighted with skip/import toggle, (c) error rows with Skip or Edit inline — editing opens a small correction form (date picker + editable fields); corrected rows re-join the valid list
 5. **Commit** — write accepted transactions to DB; save column mapping for the account; transactions land as uncategorized (`CategoryId = null`, `IsTransfer = false`)
+
+Amount parsing: single signed Amount column only (positive = credit, negative = debit). Debit/Credit split-column support is out of scope for this phase.
 
 No auto-categorization in this phase — that is wired in Phase 5.
 
@@ -58,12 +60,16 @@ No auto-categorization in this phase — that is wired in Phase 5.
 - [ ] Selecting a CSV file parses its headers and presents the column mapping UI
 - [ ] Column mapping is pre-filled from a saved mapping if one exists for the account
 - [ ] After mapping, all rows are parsed into candidate transactions
+- [ ] Rows with unparseable dates surface as errors (not silently dropped)
+- [ ] Error rows shown in preview with Skip / Edit options; editing a row re-parses it into the valid list
 - [ ] Duplicate transactions (Date + Description + Amount + Account) are flagged in the preview
 - [ ] User can toggle skip/import on individual duplicates
 - [ ] Committing writes accepted transactions to the database as uncategorized
 - [ ] Column mapping is persisted to the account after a successful import
-- [ ] Integration tests: given a CSV string + mapping, assert correct transactions are parsed
-- [ ] Integration tests: duplicate detection correctly identifies duplicates
+- [ ] Unit tests: headers parsed from CSV string
+- [ ] Unit tests: rows parsed correctly with full and partial mappings
+- [ ] Unit tests: malformed date row appears in error list with row number and raw content
+- [ ] Unit tests: duplicate detection correctly identifies duplicates
 
 ---
 
