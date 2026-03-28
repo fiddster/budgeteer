@@ -4,7 +4,9 @@ namespace Budgeteer.Core.Import;
 
 public interface ICsvImportService
 {
-    IReadOnlyList<string> ParseHeaders(string csvContent);
+    char DetectDelimiter(string csvContent);
+
+    IReadOnlyList<string> ParseHeaders(string csvContent, char delimiter = ',');
 
     ParseResult ParseTransactions(string csvContent, ColumnMapping mapping, int accountId);
 

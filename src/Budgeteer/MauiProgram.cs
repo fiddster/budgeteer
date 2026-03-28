@@ -1,5 +1,8 @@
+using Budgeteer.Accounts;
 using Budgeteer.Core.Data;
+using Budgeteer.Core.Import;
 using Budgeteer.Core.Services;
+using Budgeteer.Import;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -25,14 +28,29 @@ public static class MauiProgram
 		builder.Services.AddTransient<DatabaseInitializer>();
 		builder.Services.AddTransient<ICategoryService, CategoryService>();
 		builder.Services.AddTransient<IAccountService, AccountService>();
+		builder.Services.AddTransient<ICsvImportService, CsvImportService>();
+
+		builder.Services.AddSingleton<ImportSession>();
+		builder.Services.AddTransient<AccountsPage>();
+		builder.Services.AddTransient<ImportColumnMappingPage>();
+		builder.Services.AddTransient<ImportPreviewPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
 
+		System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
 		var app = builder.Build();
 
 		using var scope = app.Services.CreateScope();
+
+#if DEBUG
+		// Uncomment to wipe and recreate the database on every debug launch (useful after schema changes).
+		var db = scope.ServiceProvider.GetRequiredService<BudgeteerDbContext>();
+		db.Database.EnsureDeleted();
+#endif
+
 		var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
 		initializer.EnsureCreatedAsync().GetAwaiter().GetResult();
 

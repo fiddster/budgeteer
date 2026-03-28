@@ -33,6 +33,33 @@ public class CsvImportServiceTests : IAsyncLifetime
         ReferenceColumn = "Reference"
     };
 
+    // ── DetectDelimiter ───────────────────────────────────────────────────────
+
+    [Fact]
+    public void DetectDelimiter_SemicolonFile_ReturnsSemicolon()
+    {
+        var csv = "Datum;Text;Belopp;Saldo\n2024-01-01;Coffee;-3.50;100.00";
+
+        _sut.DetectDelimiter(csv).Should().Be(';');
+    }
+
+    [Fact]
+    public void DetectDelimiter_CommaFile_ReturnsComma()
+    {
+        var csv = "Date,Description,Amount\n2024-01-01,Coffee,-3.50";
+
+        _sut.DetectDelimiter(csv).Should().Be(',');
+    }
+
+    [Fact]
+    public void DetectDelimiter_PreambleFirstLine_StillDetectsCorrectDelimiter()
+    {
+        // First line has no commas; real header is on line 2
+        var csv = "* Metadata line with no delimiters\nDate,Description,Amount\n2024-01-01,Coffee,-3.50";
+
+        _sut.DetectDelimiter(csv).Should().Be(',');
+    }
+
     // ── ParseHeaders ─────────────────────────────────────────────────────────
 
     [Fact]
@@ -45,7 +72,67 @@ public class CsvImportServiceTests : IAsyncLifetime
         headers.Should().Equal("Date", "Description", "Amount", "Balance");
     }
 
+    [Fact]
+    public void ParseHeaders_WithPreambleLine_ReturnsRealHeaderColumns()
+    {
+        var csv = "* Metadata line\nDate,Description,Amount\n2024-01-01,Coffee,-3.50";
+
+        var headers = _sut.ParseHeaders(csv);
+
+        headers.Should().Equal("Date", "Description", "Amount");
+    }
+
+    [Fact]
+    public void ParseHeaders_SemicolonDelimited_ReturnsCorrectColumns()
+    {
+        var csv = "Datum;Text;Belopp;Saldo\n2024-01-01;Coffee;-3.50;100.00";
+
+        var headers = _sut.ParseHeaders(csv, delimiter: ';');
+
+        headers.Should().Equal("Datum", "Text", "Belopp", "Saldo");
+    }
+
     // ── ParseTransactions ─────────────────────────────────────────────────────
+
+    [Fact]
+    public void ParseTransactions_WithPreambleLine_ParsesDataRows()
+    {
+        var csv = "* Metadata line\nDate,Description,Amount\n2024-01-15,Supermarket,-52.30";
+        var mapping = new ColumnMapping
+        {
+            DateColumn = "Date",
+            DescriptionColumn = "Description",
+            AmountColumn = "Amount"
+        };
+
+        var result = _sut.ParseTransactions(csv, mapping, accountId: 1);
+
+        result.Errors.Should().BeEmpty();
+        var tx = result.Transactions.Single();
+        tx.Description.Should().Be("Supermarket");
+        tx.Amount.Should().Be(-52.30m);
+    }
+
+    [Fact]
+    public void ParseTransactions_SemicolonDelimited_ParsesRowsCorrectly()
+    {
+        var csv = "Datum;Text;Belopp\n2024-01-15;Supermarket;-52.30";
+        var mapping = new ColumnMapping
+        {
+            DateColumn = "Datum",
+            DescriptionColumn = "Text",
+            AmountColumn = "Belopp",
+            Delimiter = ";"
+        };
+
+        var result = _sut.ParseTransactions(csv, mapping, accountId: 1);
+
+        result.Errors.Should().BeEmpty();
+        var tx = result.Transactions.Single();
+        tx.Date.Should().Be(new DateOnly(2024, 1, 15));
+        tx.Description.Should().Be("Supermarket");
+        tx.Amount.Should().Be(-52.30m);
+    }
 
     [Fact]
     public void ParseTransactions_ParsesRowsWithCompleteMapping()

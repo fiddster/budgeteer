@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Budgeteer.Import.ImportColumnMappingPage"
+             Title="Map Columns">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+
+            <Button x:Name="PickFileButton"
+                    Text="Choose CSV File…"
+                    Clicked="OnPickFileClicked"
+                    HorizontalOptions="Start" />
+
+            <Label x:Name="FileNameLabel"
+                   Text=""
+                   FontSize="13"
+                   TextColor="Gray" />
+
+            <!-- Delimiter + encoding + column mapping — shown after a file is picked -->
+            <VerticalStackLayout x:Name="MappingSection"
+                                 IsVisible="False"
+                                 Spacing="12">
+
+                <!-- Delimiter and Encoding row -->
+                <Grid ColumnDefinitions="Auto,*,24,Auto,*" ColumnSpacing="10">
+                    <Label Grid.Column="0" Text="Delimiter:" VerticalOptions="Center" />
+                    <Picker x:Name="DelimiterPicker"
+                            Grid.Column="1"
+                            SelectedIndexChanged="OnDelimiterChanged" />
+
+                    <!-- spacer -->
+                    <Label Grid.Column="2" />
+
+                    <Label Grid.Column="3" Text="Encoding:" VerticalOptions="Center" />
+                    <Picker x:Name="EncodingPicker"
+                            Grid.Column="4"
+                            SelectedIndexChanged="OnEncodingChanged" />
+                </Grid>
+
+                <BoxView HeightRequest="1" BackgroundColor="LightGray" />
+
+                <Label Text="Map CSV columns to fields:"
+                       FontAttributes="Bold"
+                       FontSize="15" />
+
+                <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                      ColumnSpacing="12" RowSpacing="10">
+
+                    <Label Grid.Row="0" Grid.Column="0" Text="Date *" VerticalOptions="Center" />
+                    <Picker x:Name="DatePicker" Grid.Row="0" Grid.Column="1" />
+
+                    <Label Grid.Row="1" Grid.Column="0" Text="Description *" VerticalOptions="Center" />
+                    <Picker x:Name="DescriptionPicker" Grid.Row="1" Grid.Column="1" />
+
+                    <Label Grid.Row="2" Grid.Column="0" Text="Amount *" VerticalOptions="Center" />
+                    <Picker x:Name="AmountPicker" Grid.Row="2" Grid.Column="1" />
+
+                    <Label Grid.Row="3" Grid.Column="0" Text="Balance" VerticalOptions="Center"
+                           TextColor="Gray" />
+                    <Picker x:Name="BalancePicker" Grid.Row="3" Grid.Column="1" />
+
+                    <Label Grid.Row="4" Grid.Column="0" Text="Reference" VerticalOptions="Center"
+                           TextColor="Gray" />
+                    <Picker x:Name="ReferencePicker" Grid.Row="4" Grid.Column="1" />
+
+                </Grid>
+
+                <Button Text="Parse &amp; Preview →"
+                        Clicked="OnParseClicked"
+                        HorizontalOptions="End"
+                        Margin="0,8,0,0" />
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -8,12 +8,23 @@ namespace Budgeteer.Core.Import;
 
 public class CsvImportService(BudgeteerDbContext db) : ICsvImportService
 {
-    public IReadOnlyList<string> ParseHeaders(string csvContent)
+    private static readonly char[] CandidateDelimiters = [',', ';', '\t', '|'];
+
+    public char DetectDelimiter(string csvContent)
     {
-        using var reader = new StringReader(csvContent);
+        // Look at the first several lines so a preamble-only first line doesn't skew results
+        var lines = csvContent.Split('\n', 6).Where(l => l.Length > 0);
+        return CandidateDelimiters.MaxBy(c => lines.Max(l => l.Count(ch => ch == c)));
+    }
+
+    public IReadOnlyList<string> ParseHeaders(string csvContent, char delimiter = ',')
+    {
+        var content = SkipPreamble(csvContent, delimiter);
+        using var reader = new StringReader(content);
         using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            HasHeaderRecord = true
+            HasHeaderRecord = true,
+            Delimiter = delimiter.ToString()
         });
         csv.Read();
         csv.ReadHeader();
@@ -25,11 +36,15 @@ public class CsvImportService(BudgeteerDbContext db) : ICsvImportService
         var transactions = new List<ParsedTransaction>();
         var errors = new List<ParseError>();
 
-        using var reader = new StringReader(csvContent);
+        var delimiter = mapping.Delimiter.Length == 1 ? mapping.Delimiter[0] : ',';
+        var content = SkipPreamble(csvContent, delimiter);
+
+        using var reader = new StringReader(content);
         using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
         {
             HasHeaderRecord = true,
-            MissingFieldFound = null  // treat missing columns as null rather than throwing
+            MissingFieldFound = null,  // treat missing columns as null rather than throwing
+            Delimiter = delimiter.ToString()
         });
 
         csv.Read();
@@ -120,8 +135,23 @@ public class CsvImportService(BudgeteerDbContext db) : ICsvImportService
             existingMapping.AmountColumn = mapping.AmountColumn;
             existingMapping.BalanceColumn = mapping.BalanceColumn;
             existingMapping.ReferenceColumn = mapping.ReferenceColumn;
+            existingMapping.Delimiter = mapping.Delimiter;
+            existingMapping.Encoding = mapping.Encoding;
         }
 
         await db.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Skips preamble lines that have fewer delimiter occurrences than the real header row.
+    /// The first line with the maximum delimiter count is treated as the CSV header.
+    /// </summary>
+    private static string SkipPreamble(string csvContent, char delimiter)
+    {
+        var lines = csvContent.Split('\n');
+        var max = lines.Max(l => l.Count(c => c == delimiter));
+        if (max == 0) return csvContent;
+        var idx = Array.FindIndex(lines, l => l.Count(c => c == delimiter) == max);
+        return idx <= 0 ? csvContent : string.Join('\n', lines.Skip(idx));
     }
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Budgeteer.Accounts.AccountsPage"
+             Title="Accounts">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <Button Grid.Row="0"
+                Text="+ Add Account"
+                Margin="16,12"
+                HorizontalOptions="Start"
+                Clicked="OnAddAccountClicked" />
+
+        <CollectionView Grid.Row="1"
+                        x:Name="AccountsList"
+                        Margin="16,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="*,Auto" Padding="0,8">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="{Binding Name}"
+                                   FontSize="16"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding Type}"
+                                   FontSize="13"
+                                   TextColor="Gray" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1"
+                                Text="Import CSV"
+                                BindingContext="{Binding .}"
+                                Clicked="OnImportClicked"
+                                VerticalOptions="Center" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

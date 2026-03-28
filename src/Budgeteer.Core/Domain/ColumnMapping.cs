@@ -10,4 +10,6 @@ public class ColumnMapping
     public string? AmountColumn { get; set; }
     public string? BalanceColumn { get; set; }
     public string? ReferenceColumn { get; set; }
+    public string Delimiter { get; set; } = ",";
+    public string Encoding { get; set; } = "utf-8";
 }
