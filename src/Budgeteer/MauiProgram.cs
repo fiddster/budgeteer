@@ -1,4 +1,5 @@
 using Budgeteer.Accounts;
+using Budgeteer.Budgets;
 using Budgeteer.Core.Data;
 using Budgeteer.Core.Import;
 using Budgeteer.Core.Services;
@@ -29,11 +30,14 @@ public static class MauiProgram
 		builder.Services.AddTransient<ICategoryService, CategoryService>();
 		builder.Services.AddTransient<IAccountService, AccountService>();
 		builder.Services.AddTransient<ICsvImportService, CsvImportService>();
+		builder.Services.AddTransient<IBudgetService, BudgetService>();
 
 		builder.Services.AddSingleton<ImportSession>();
 		builder.Services.AddTransient<AccountsPage>();
 		builder.Services.AddTransient<ImportColumnMappingPage>();
 		builder.Services.AddTransient<ImportPreviewPage>();
+		builder.Services.AddTransient<BudgetsPage>();
+		builder.Services.AddTransient<EditBudgetPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

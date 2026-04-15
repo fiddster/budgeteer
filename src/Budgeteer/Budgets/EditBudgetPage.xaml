@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Budgeteer.Budgets.EditBudgetPage"
+             Title="Budget">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <Label Text="Name" />
+            <Entry x:Name="NameEntry" Placeholder="Budget name" />
+
+            <Label Text="Spending Limit" />
+            <Entry x:Name="LimitEntry" Keyboard="Numeric" Placeholder="0.00" />
+
+            <Label Text="Timespan" />
+            <Picker x:Name="TimespanPicker" />
+
+            <Label Text="Rollover unspent amount" />
+            <Switch x:Name="RolloverSwitch" />
+
+            <Label Text="Enable spending alert" />
+            <Switch x:Name="AlertSwitch" Toggled="OnAlertSwitchToggled" />
+
+            <Label x:Name="ThresholdLabel" Text="Alert threshold (%)" IsVisible="False" />
+            <Entry x:Name="ThresholdEntry" Keyboard="Numeric" Placeholder="80" IsVisible="False" />
+
+            <Label Text="Categories" />
+            <CollectionView x:Name="CategoriesList"
+                            HeightRequest="200"
+                            SelectionMode="Multiple"
+                            SelectionChanged="OnCategorySelectionChanged">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Label Text="{Binding Name}" Padding="0,6" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="Save" Clicked="OnSaveClicked" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
