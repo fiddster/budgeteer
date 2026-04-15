@@ -3,6 +3,7 @@ using Budgeteer.Core.Data;
 using Budgeteer.Core.Import;
 using Budgeteer.Core.Services;
 using Budgeteer.Import;
+using Budgeteer.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -29,9 +30,11 @@ public static class MauiProgram
 		builder.Services.AddTransient<ICategoryService, CategoryService>();
 		builder.Services.AddTransient<IAccountService, AccountService>();
 		builder.Services.AddTransient<ICsvImportService, CsvImportService>();
+		builder.Services.AddTransient<ITransactionService, TransactionService>();
 
 		builder.Services.AddSingleton<ImportSession>();
 		builder.Services.AddTransient<AccountsPage>();
+		builder.Services.AddTransient<TransactionsPage>();
 		builder.Services.AddTransient<ImportColumnMappingPage>();
 		builder.Services.AddTransient<ImportPreviewPage>();
 

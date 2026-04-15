@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Budgeteer.Transactions.TransactionsPage"
+             Title="Transactions">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <HorizontalStackLayout Grid.Row="0"
+                               Margin="16,8"
+                               Spacing="8">
+            <Picker x:Name="AccountFilter"
+                    Title="All accounts"
+                    WidthRequest="160"
+                    SelectedIndexChanged="OnAccountFilterChanged" />
+            <Picker x:Name="CategoryFilter"
+                    Title="All categories"
+                    WidthRequest="160"
+                    SelectedIndexChanged="OnCategoryFilterChanged" />
+            <DatePicker x:Name="FromDate"
+                        Format="yyyy-MM-dd"
+                        WidthRequest="130"
+                        DateSelected="OnFromDateSelected" />
+            <Label Text="–" VerticalOptions="Center" />
+            <DatePicker x:Name="ToDate"
+                        Format="yyyy-MM-dd"
+                        WidthRequest="130"
+                        DateSelected="OnToDateSelected" />
+            <Button Text="Clear" Clicked="OnClearFiltersClicked" />
+        </HorizontalStackLayout>
+
+        <CollectionView Grid.Row="1"
+                        x:Name="TransactionsList"
+                        Margin="16,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="0,8">
+                        <Label Grid.Column="0"
+                               Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}"
+                               WidthRequest="100"
+                               VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                            <Label Text="{Binding Description}" FontAttributes="Bold" />
+                            <HorizontalStackLayout Spacing="8">
+                                <Label Text="{Binding Account.Name}"
+                                       FontSize="12"
+                                       TextColor="Gray" />
+                                <Label Text="{Binding Category.Name, FallbackValue='Uncategorized'}"
+                                       FontSize="12"
+                                       TextColor="Gray" />
+                                <Label Text="Transfer"
+                                       FontSize="12"
+                                       TextColor="CornflowerBlue"
+                                       IsVisible="{Binding IsTransfer}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2"
+                                            Spacing="4"
+                                            HorizontalOptions="End">
+                            <Label Text="{Binding Amount, StringFormat='{0:C}'}"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="End" />
+                            <Button Text="Toggle Transfer"
+                                    FontSize="11"
+                                    Padding="4,2"
+                                    Clicked="OnToggleTransferClicked"
+                                    BindingContext="{Binding .}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>
