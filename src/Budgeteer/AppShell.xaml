@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:accounts="clr-namespace:Budgeteer.Accounts"
     xmlns:transactions="clr-namespace:Budgeteer.Transactions"
+    xmlns:budgets="clr-namespace:Budgeteer.Budgets"
     Title="Budgeteer">
 
     <ShellContent
@@ -16,5 +17,10 @@
         Title="Transactions"
         Route="transactions"
         ContentTemplate="{DataTemplate transactions:TransactionsPage}" />
+
+    <ShellContent
+        Title="Budgets"
+        Route="budgets"
+        ContentTemplate="{DataTemplate budgets:BudgetsPage}" />
 
 </Shell>

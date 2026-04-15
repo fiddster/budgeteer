@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Budgeteer.Budgets.BudgetsPage"
+             Title="Budgets">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <Button Grid.Row="0"
+                Text="+ Add Budget"
+                Margin="16,12"
+                HorizontalOptions="Start"
+                Clicked="OnAddBudgetClicked" />
+
+        <CollectionView Grid.Row="1"
+                        x:Name="BudgetsList"
+                        Margin="16,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="*,Auto" Padding="0,8">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="{Binding Name}"
+                                   FontSize="16"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding Timespan}"
+                                   FontSize="13"
+                                   TextColor="Gray" />
+                            <Label Text="{Binding SpendingLimit, StringFormat='Limit: {0:C}'}"
+                                   FontSize="13"
+                                   TextColor="Gray" />
+                        </VerticalStackLayout>
+                        <HorizontalStackLayout Grid.Column="1"
+                                               Spacing="8"
+                                               VerticalOptions="Center">
+                            <Button Text="Edit"
+                                    Clicked="OnEditClicked"
+                                    BindingContext="{Binding .}" />
+                            <Button Text="Delete"
+                                    Clicked="OnDeleteClicked"
+                                    BindingContext="{Binding .}" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>
